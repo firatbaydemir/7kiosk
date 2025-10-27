@@ -30,5 +30,6 @@
     "updateConfirm": "Evet, Miktarı Güncelle",
     "updateCancel": "İptal Et, Değiştirme",
     "loginErrorPrefix": "Hata: ",
-    "weeklyCount": "Haftalık Depo Sayımı"
+    "weeklyCount": "Haftalık Depo Sayımı",
+    "alert_productNotFound": "Ürün kütüphanede bulunamadı. Lütfen önce depoda bularak okutun."
 }

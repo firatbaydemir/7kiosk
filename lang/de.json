@@ -30,5 +30,6 @@
     "updateConfirm": "Ja, Menge aktualisieren",
     "updateCancel": "Abbrechen (Nicht ändern)",
     "loginErrorPrefix": "Fehler: ",
-    "weeklyCount": "Wöchentliche Inventur"
+    "weeklyCount": "Wöchentliche Inventur",
+    "alert_productNotFound": "Produkt nicht in der Bibliothek gefunden. Bitte scannen Sie es zuerst im Lager."
 }

@@ -155,7 +155,7 @@ startScanButton.addEventListener('click', () => {
 });
 
 // !!! PROJENİN KALBİ: BARKOD OKUNDUĞUNDA !!!
-function onScanSuccess(decodedText, decodedResult) {
+async function onScanSuccess(decodedText, decodedResult) {
     if (!html5QrCode) return; // Okuyucu kapalıysa işlem yapma
     
     html5QrCode.pause();
@@ -185,19 +185,35 @@ function onScanSuccess(decodedText, decodedResult) {
         showModal('known-product-modal');
     } 
     // 3. ADIM: YENİ ÜRÜN (İlk defa görülüyor)
+   // YENİ KOD (API Sorgusu Eklenmiş Hali)
     else {
-        document.getElementById('new-product-barcode').textContent = activeBarcode;
-        document.getElementById('new-product-name').value = ""; // (API sorgusu buraya eklenebilir)
-        
-        // Formu temizle
-        document.getElementById('new-product-category').value = "Diğer";
-        document.getElementById('new-product-unit-name').value = "";
-        document.getElementById('new-product-multiplier').value = 1;
-        document.getElementById('new-kasa-input').value = 0;
-        document.getElementById('new-adet-input').value = 0;
-        
-        showModal('new-product-modal');
+    // Hayır, kayıtlı değil. "Yeni Ürün Tanımla" Pop-up'ını aç.
+    document.getElementById('new-product-barcode').textContent = activeBarcode;
+
+    // Adım 3a: Global API'yi (Open Food Facts) Sorgula
+    try {
+        document.getElementById('new-product-name').value = "API Aranıyor...";
+        const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${activeBarcode}.json`);
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.status === 1 && data.product && data.product.product_name) {
+                // API'den gelen ismi otomatik doldur
+                document.getElementById('new-product-name').value = data.product.product_name;
+            } else {
+                document.getElementById('new-product-name').value = ""; // Bulamadı, manuel girin
+            }
+        } else {
+            document.getElementById('new-product-name').value = ""; // API hatası, manuel girin
+        }
+    } catch (error) {
+        console.error("API Hatası:", error);
+        document.getElementById('new-product-name').value = ""; // Ağ hatası, manuel girin
     }
+
+    // Adım 3b: Pop-up'ı göster
+    showModal('new-product-modal');
+}
 }
 
 // === 5. POP-UP (MODAL) YÖNETİMİ ===
@@ -326,7 +342,7 @@ document.getElementById('manual-search-input').addEventListener('change', (e) =>
     } else if (currentLiveList.has(foundBarcode)) {
         alert("Bu ürün zaten sayıldı.");
     } else {
-        alert("Ürün kütüphanede bulunamadı. Lütfen önce depoda bularak okutun.");
+        alert(currentLangData.alert_productNotFound || "Product not found.");
     }
 });
 
