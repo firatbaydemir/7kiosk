@@ -79,36 +79,63 @@ loginButton.addEventListener('click', () => {
     const email = document.getElementById('login-email').value;
     const pass = document.getElementById('login-password').value;
     
+    // Sadece girişi dene. Ekranları değiştirmek onAuthStateChanged'in işi.
     auth.signInWithEmailAndPassword(email, pass)
-        .then((userCredential) => {
-            currentUser = userCredential.user;
-            currentBranchId = email.split('@')[0]; // Şube kimliği (örn: "sube.a")
-            userInfo.textContent = `Şube: ${currentBranchId}`;
-            
-            loginScreen.style.display = 'none';
-            appScreen.style.display = 'block';
-            
-            loadProductLibrary(); // Giriş yapınca ürün kütüphanesini yükle
-            startNewCount(); // Yeni sayım listesini hazırla
-        })
         .catch((error) => {
+            // Başarısız olursa hatayı göster
             loginError.textContent = (currentLangData.loginErrorPrefix || "Error: ") + error.message;
         });
 });
 
 // Çıkış Butonu
 logoutButton.addEventListener('click', () => {
-    auth.signOut().then(() => {
+    // Sadece çıkış yap. Ekranları değiştirmek onAuthStateChanged'in işi.
+    auth.signOut();
+});
+// === ANA OTURUM KONTROLCÜSÜ ===
+// Sayfa yüklendiğinde ve her giriş/çıkışta bu fonksiyon çalışır
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        // --- KULLANICI GİRİŞ YAPMIŞ ---
+        // (İster butona basarak, ister sayfayı yenileyerek)
+
+        currentUser = user;
+        currentBranchId = user.email.split('@')[0];
+        userInfo.textContent = `Şube: ${currentBranchId}`;
+        
+        loginError.textContent = ""; // Hataları temizle
+        loginScreen.style.display = 'none';
+        appScreen.style.display = 'block';
+
+        // Gerekli verileri ve ayarları yükle
+        loadProductLibrary(); 
+        startNewCount(); 
+        
+    } else {
+        // --- KULLANICI ÇIKIŞ YAPMIŞ ---
+        // (İster butona basarak, ister oturum kapandığı için)
+
         currentUser = null;
         currentBranchId = null;
-        currentLiveList.clear();
+        currentLiveList.clear(); 
         currentProductLibrary.clear();
         
         loginScreen.style.display = 'block';
         appScreen.style.display = 'none';
-    });
-});
 
+        // Uygulama ekranındayken çıkış yapılırsa kamerayı durdur
+        if (html5QrCode) {
+            try {
+                html5QrCode.stop();
+                html5QrCode = null;
+                document.getElementById('reader-start-button-div').style.display = 'block'; // Kamerayı yeniden başlat butonu
+                document.getElementById('start-scan-button').textContent = currentLangData.startCamera;
+            } catch (e) {
+                console.warn("Kamera durdurma hatası (normal çıkış):", e);
+            }
+        }
+    }
+});
 // === 3. ANA UYGULAMA MANTIĞI ===
 
 // Yeni sayımı başlatır
@@ -186,7 +213,7 @@ async function onScanSuccess(decodedText, decodedResult) {
     } 
     // 3. ADIM: YENİ ÜRÜN (İlk defa görülüyor)
    // YENİ KOD (API Sorgusu Eklenmiş Hali)
-    else {
+   else {
     // Hayır, kayıtlı değil. "Yeni Ürün Tanımla" Pop-up'ını aç.
     document.getElementById('new-product-barcode').textContent = activeBarcode;
 
@@ -433,4 +460,7 @@ filterButton.addEventListener('click', () => {
 
 
 // === UYGULAMAYI BAŞLAT ===
-initializeLanguage(); // Sayfa ilk açıldığında dili yükle
+// Dil fonksiyonu, oturum dinleyicisinden önce çalışmalı
+// ki giriş ekranı doğru dilde yüklensin.
+initializeLanguage(); 
+// (onAuthStateChanged fonksiyonu kendi kendini otomatik olarak çağırır)
