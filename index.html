@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depo Sayım Asistanı</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="login-screen">
+        <h2 data-lang-key="branchLogin">Şube Girişi</h2>
+        <input type="email" id="login-email" placeholder="E-posta">
+        <input type="password" id="login-password" placeholder="Şifre">
+        <button id="login-button" data-lang-key="loginButton">Giriş Yap</button>
+        <p id="login-error"></p>
+    </div>
+
+    <div id="app-screen" style="display: none;">
+        <header>
+            <span id="user-info"></span>
+            <select id="language-switcher">
+                <option value="de">Deutsch</option>
+                <option value="tr">Türkçe</option>
+                </select>
+            <button id="logout-button" data-lang-key="logoutButton">Çıkış Yap</button>
+        </header>
+
+        <h1></h1> <div id="barcode-reader-container">
+            <div id="reader-start-button-div">
+                <button id="start-scan-button" data-lang-key="startCamera">Kamerayı Başlat</button>
+            </div>
+            <div id="reader" width="100%"></div>
+            <p id="scan-result"></p>
+        </div>
+        
+        <div class="manual-add-container">
+            <h3 data-lang-key="addManually">Depoda Yoksa Manuel Ekle</h3>
+            <input type="text" id="manual-search-input" data-lang-key-placeholder="searchProduct">
+            <div id="manual-search-results"></div>
+        </div>
+
+        <div class="live-list-container">
+            <h2 data-lang-key="liveCountList">Canlı Sayım Listesi</h2>
+            <ul id="live-scan-list"></ul>
+        </div>
+        
+        <hr>
+        <button id="finish-scan-button" data-lang-key="finishAndReport">Sayımı Bitir ve Raporla</button>
+
+        <div id="report-section" style="display: none;">
+            <h2 data-lang-key="report1Title">Rapor 1: Mevcut Durum</h2>
+            <ul id="report-list-current"></ul>
+
+            <h2 data-lang-key="report2Title">Rapor 2: Özel Sipariş Listesi</h2>
+            <div>
+                <label data-lang-key="filterLabel">Filtre Etiketi</label>
+                <input type="number" id="filter-input" value="5">
+                <button id="filter-button" data-lang-key="filterButton">Filtrele</button>
+            </div>
+            <div id="report-list-filtered"></div>
+        </div>
+    </div>
+
+    <div id="known-product-modal" class="modal">
+        <div class="modal-content">
+            <h3 data-lang-key="knownProductTitle">Miktar Gir (Bilinen Ürün)</h3>
+            <h4 id="known-product-name">Ürün Adı</h4>
+            <small id="known-product-unit-info"></small>
+            <div>
+                <label data-lang-key="fullKasa">Dolu Kasa/Koli:</label>
+                <input type="number" id="known-kasa-input" min="0">
+            </div>
+            <div>
+                <label data-lang-key="extraPieces">Ekstra Adet:</label>
+                <input type="number" id="known-adet-input" min="0">
+            </div>
+            <button id="save-known-quantity-button" data-lang-key="addToList">Listeye Ekle</button>
+            <button class="close-modal" data-lang-key="close">Kapat</button>
+        </div>
+    </div>
+
+    <div id="new-product-modal" class="modal">
+        <div class="modal-content">
+            <h3 data-lang-key="newProductTitle">Yeni Ürün Tanımla ve Say</h3>
+            <p><span data-lang-key="barcodeScanned">Barkod:</span> <span id="new-product-barcode"></span></p>
+            <div>
+                <label data-lang-key="productNameLabel">Ürün Adı:</label>
+                <input type="text" id="new-product-name">
+            </div>
+            <div>
+                <label data-lang-key="categoryLabel">Kategori:</label>
+                <select id="new-product-category">
+                    <option value="Soft İçecek">Soft İçecek</option>
+                    <option value="Alkollü İçecek">Alkollü İçecek</option>
+                    <option value="Tütün">Tütün</option>
+                    <option value="Atıştırmalık">Atıştırmalık</option>
+                    <option value="Diğer">Diğer</option>
+                </select>
+            </div>
+            <div>
+                <label data-lang-key="unitNameLabel">Ana Sayım Birimi:</label>
+                <input type="text" id="new-product-unit-name" placeholder="Örn: Kasa, Koli, Paket">
+            </div>
+            <div>
+                <label data-lang-key="multiplierLabel">Birim Çarpanı (1 Kasa kaç adet?):</label>
+                <input type="number" id="new-product-multiplier" min="1" value="1">
+            </div>
+            <hr>
+            <h4 data-lang-key="currentQuantity">Mevcut Miktarı Giriniz:</h4>
+            <div>
+                <label data-lang-key="fullKasa">Dolu Kasa/Koli:</label>
+                <input type="number" id="new-kasa-input" min="0" value="0">
+            </div>
+            <div>
+                <label data-lang-key="extraPieces">Ekstra Adet:</label>
+                <input type="number" id="new-adet-input" min="0" value="0">
+            </div>
+            <button id="save-new-product-button" data-lang-key="saveAndAdd">Kaydet ve Listeye Ekle</button>
+            <button class="close-modal" data-lang-key="close">Kapat</button>
+        </div>
+    </div>
+    
+    <div id="update-quantity-modal" class="modal">
+        <div class="modal-content">
+            <h3 data-lang-key="updateTitle">Dikkat: Ürün Zaten Sayıldı!</h3>
+            <p>Ürün: <strong id="update-product-name"></strong></p>
+            <p><span data-lang-key="currentRecord">Mevcut Kayıt:</span> <strong id="update-product-quantity"></strong></p>
+            <p>Miktarı güncellemek ister misiniz?</p>
+            <button id="update-quantity-confirm-button" data-lang-key="updateConfirm">Evet, Güncelle</button>
+            <button class="close-modal" data-lang-key="updateCancel">İptal Et</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>
