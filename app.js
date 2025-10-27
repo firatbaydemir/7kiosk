@@ -285,7 +285,7 @@ document.getElementById('save-new-product-button').addEventListener('click', () 
     const productData = {
         name: document.getElementById('new-product-name').value.trim(),
         category: document.getElementById('new-product-category').value,
-        unitName: document.getElementById('new-product-unit-name').value.trim() || "Stk", // Stk = Stück
+        unitName: document.getElementById('new-product-unit-name').value, // Artık bir <select> menüden geliyor
         multiplier: parseInt(document.getElementById('new-product-multiplier').value) || 1
     };
     if (!productData.name) {

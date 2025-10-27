@@ -99,7 +99,15 @@
             </div>
             <div>
                 <label data-lang-key="unitNameLabel">Ana Sayım Birimi:</label>
-                <input type="text" id="new-product-unit-name" placeholder="Örn: Kasa, Koli, Paket">
+                <select id="new-product-unit-name">
+                    <option value="Stück" data-lang-key="unit_piece">Adet / Tekli</option>
+                    <option value="Paket" data-lang-key="unit_pack">Paket (Sakız, Cips...)</option>
+                    <option value="Stange" data-lang-key="unit_carton">Karton (Tütün...)</option>
+                    <option value="Kiste" data-lang-key="unit_crate">Kasa (Depozitolu Şişe...)</option>
+                    <option value="Koli" data-lang-key="unit_case">Koli (Kutu İçecek...)</option>
+                    <option value="Flasche" data-lang-key="unit_bottle">Şişe</option>
+                    <option value="Dose" data-lang-key="unit_can">Kutu (Dose)</option>
+                </select>
             </div>
             <div>
                 <label data-lang-key="multiplierLabel">Birim Çarpanı (1 Kasa kaç adet?):</label>

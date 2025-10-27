@@ -31,5 +31,12 @@
     "updateCancel": "Abbrechen (Nicht ändern)",
     "loginErrorPrefix": "Fehler: ",
     "weeklyCount": "Wöchentliche Inventur",
-    "alert_productNotFound": "Produkt nicht in der Bibliothek gefunden. Bitte scannen Sie es zuerst im Lager."
+    "alert_productNotFound": "Produkt nicht in der Bibliothek gefunden. Bitte scannen Sie es zuerst im Lager.",
+    "unit_piece": "Stück / Einzeln",
+    "unit_pack": "Paket (Kaugummi, Chips...)",
+    "unit_carton": "Stange (Zigaretten...)",
+    "unit_crate": "Kiste (Pfandflaschen...)",
+    "unit_case": "Karton (Dosen...)",
+    "unit_bottle": "Flasche",
+    "unit_can": "Dose"
 }

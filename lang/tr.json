@@ -31,5 +31,12 @@
     "updateCancel": "İptal Et, Değiştirme",
     "loginErrorPrefix": "Hata: ",
     "weeklyCount": "Haftalık Depo Sayımı",
-    "alert_productNotFound": "Ürün kütüphanede bulunamadı. Lütfen önce depoda bularak okutun."
+    "alert_productNotFound": "Ürün kütüphanede bulunamadı. Lütfen önce depoda bularak okutun.",
+    "unit_piece": "Adet / Tekli",
+    "unit_pack": "Paket (Sakız, Cips...)",
+    "unit_carton": "Karton (Tütün...)",
+    "unit_crate": "Kasa (Depozitolu Şişe...)",
+    "unit_case": "Koli (Kutu İçecek...)",
+    "unit_bottle": "Şişe",
+    "unit_can": "Kutu (Dose)"
 }
