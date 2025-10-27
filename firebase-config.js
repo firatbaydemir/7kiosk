@@ -7,3 +7,8 @@ const firebaseConfig = {
     appId: "1:342656071523:web:b41995a2e1a37a0d784556",
     measurementId: "G-YBZX96NK3H"
   };
+
+// BU DOĞRU KOD
+var app = firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth(app);
+var db = firebase.firestore(app);
