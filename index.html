@@ -17,35 +17,36 @@
 
     <div id="app-screen" style="display: none;">
         <header>
-            <span id="user-info"></span>
+            <span id="user-info">Şube: Yükleniyor...</span>
             <select id="language-switcher">
                 <option value="de">Deutsch</option>
                 <option value="tr">Türkçe</option>
-                </select>
-            <button id="logout-button" data-lang-key="logoutButton">Çıkış Yap</button>
+            </select>
+            <button id="logout-button" data-lang-key="logoutButton">Abmelden</button>
         </header>
 
-        <h1></h1> <div id="barcode-reader-container">
+        <h1 data-lang-key="weeklyCount">Wöchentliche Inventur</h1>
+
+        <div id="barcode-reader-container">
             <div id="reader-start-button-div">
-                <button id="start-scan-button" data-lang-key="startCamera">Kamerayı Başlat</button>
+                <button id="start-scan-button" data-lang-key="startCamera">Kamera starten</button>
             </div>
             <div id="reader" width="100%"></div>
             <p id="scan-result"></p>
         </div>
         
         <div class="manual-add-container">
-            <h3 data-lang-key="addManually">Depoda Yoksa Manuel Ekle</h3>
-            <input type="text" id="manual-search-input" data-lang-key-placeholder="searchProduct">
-            <div id="manual-search-results"></div>
+            <h3 data-lang-key="addManually">Manuel Ekleme</h3>
+            <button id="show-manual-define-button" data-lang-key="defineNewManual" class="manual-button">Barkodsuz Yeni Ürün Tanımla</button>
         </div>
 
         <div class="live-list-container">
-            <h2 data-lang-key="liveCountList">Canlı Sayım Listesi</h2>
+            <h2 data-lang-key="liveCountList">Live-Zählliste</h2>
             <ul id="live-scan-list"></ul>
         </div>
         
         <hr>
-        <button id="finish-scan-button" data-lang-key="finishAndReport">Sayımı Bitir ve Raporla</button>
+        <button id="finish-scan-button" data-lang-key="finishAndReport">Zählung beenden & Melden</button>
 
         <div id="report-section" style="display: none;">
             <h2 data-lang-key="report1Title">Rapor 1: Mevcut Durum</h2>
@@ -81,48 +82,74 @@
 
     <div id="new-product-modal" class="modal">
         <div class="modal-content">
-            <h3 data-lang-key="newProductTitle">Yeni Ürün Tanımla ve Say</h3>
+            <h3 data-lang-key="newProductTitle">Yeni Ürün Tanımla</h3>
             <p><span data-lang-key="barcodeScanned">Barkod:</span> <span id="new-product-barcode"></span></p>
-            <div>
-                <label data-lang-key="productNameLabel">Ürün Adı:</label>
-                <input type="text" id="new-product-name">
+            
+            <div id="new-product-choice">
+                <p data-lang-key="newBarcodeQuestion">Bu barkod nedir?</p>
+                <input type="radio" id="choice-existing-product" name="productChoice" value="existing">
+                <label for="choice-existing-product" data-lang-key="newBarcodeForExisting">Mevcut bir ürün için YENİ BİR BARKOD.</label>
+                <br>
+                <input type="radio" id="choice-new-product" name="productChoice" value="new">
+                <label for="choice-new-product" data-lang-key="completelyNewProduct">TAMAMEN YENİ BİR ÜRÜN.</label>
             </div>
-            <div>
-                <label data-lang-key="categoryLabel">Kategori:</label>
-                <select id="new-product-category">
-                    <option value="Soft İçecek">Soft İçecek</option>
-                    <option value="Alkollü İçecek">Alkollü İçecek</option>
-                    <option value="Tütün">Tütün</option>
-                    <option value="Atıştırmalık">Atıştırmalık</option>
-                    <option value="Diğer">Diğer</option>
-                </select>
-            </div>
-            <div>
-                <label data-lang-key="unitNameLabel">Ana Sayım Birimi:</label>
-                <select id="new-product-unit-name">
-                    <option value="Stück" data-lang-key="unit_piece">Adet / Tekli</option>
-                    <option value="Paket" data-lang-key="unit_pack">Paket (Sakız, Cips...)</option>
-                    <option value="Stange" data-lang-key="unit_carton">Karton (Tütün...)</option>
-                    <option value="Kiste" data-lang-key="unit_crate">Kasa (Depozitolu Şişe...)</option>
-                    <option value="Koli" data-lang-key="unit_case">Koli (Kutu İçecek...)</option>
-                    <option value="Flasche" data-lang-key="unit_bottle">Şişe</option>
-                    <option value="Dose" data-lang-key="unit_can">Kutu (Dose)</option>
-                </select>
-            </div>
-            <div>
-                <label data-lang-key="multiplierLabel">Birim Çarpanı (1 Kasa kaç adet?):</label>
-                <input type="number" id="new-product-multiplier" min="1" value="1">
-            </div>
+
             <hr>
-            <h4 data-lang-key="currentQuantity">Mevcut Miktarı Giriniz:</h4>
-            <div>
-                <label data-lang-key="fullKasa">Dolu Kasa/Koli:</label>
-                <input type="number" id="new-kasa-input" min="0" value="0">
+
+            <div id="existing-product-search-section" class="section-hidden">
+                <label data-lang-key="searchExistingProduct">Mevcut Ürünü Kütüphaneden Ara:</label>
+                <input type="text" id="existing-product-search-input" placeholder="...">
+                <div id="existing-product-search-results"></div>
+                <input type="hidden" id="selected-product-id"> 
             </div>
-            <div>
-                <label data-lang-key="extraPieces">Ekstra Adet:</label>
-                <input type="number" id="new-adet-input" min="0" value="0">
+
+            <div id="new-product-form-section" class="section-hidden">
+                <div>
+                    <label data-lang-key="productNameLabel">Ürün Adı (Düzenle):</label>
+                    <input type="text" id="new-product-name">
+                </div>
+                <div>
+                    <label data-lang-key="categoryLabel">Kategori:</label>
+                    <select id="new-product-category">
+                        <option value="Soft İçecek">Soft İçecek</option>
+                        <option value="Alkollü İçecek">Alkollü İçecek</option>
+                        <option value="Tütün">Tütün</option>
+                        <option value="Atıştırmalık">Atıştırmalık</option>
+                        <option value="Diğer">Diğer</option>
+                    </select>
+                </div>
+                <div>
+                    <label data-lang-key="unitNameLabel">Ana Sayım Birimi:</label>
+                    <select id="new-product-unit-name">
+                        <option value="Stück" data-lang-key="unit_piece">Adet / Tekli</option>
+                        <option value="Paket" data-lang-key="unit_pack">Paket (Sakız, Cips...)</option>
+                        <option value="Stange" data-lang-key="unit_carton">Karton (Tütün...)</option>
+                        <option value="Kiste" data-lang-key="unit_crate">Kasa (Depozitolu Şişe...)</option>
+                        <option value="Koli" data-lang-key="unit_case">Koli (Kutu İçecek...)</option>
+                        <option value="Flasche" data-lang-key="unit_bottle">Şişe</option>
+                        <option value="Dose" data-lang-key="unit_can">Kutu (Dose)</option>
+                    </select>
+                </div>
+                <div>
+                    <label data-lang-key="multiplierLabel">Birim Çarpanı (1 Kasa kaç adet?):</label>
+                    <input type="number" id="new-product-multiplier" min="1" value="1">
+                </div>
             </div>
+            
+            <hr>
+            
+            <div id="new-product-quantity-section" class="section-hidden">
+                <h4 data-lang-key="currentQuantity">Mevcut Miktarı Giriniz:</h4>
+                <div>
+                    <label data-lang-key="fullKasa">Dolu Kasa/Koli:</label>
+                    <input type="number" id="new-kasa-input" min="0" value="0">
+                </div>
+                <div>
+                    <label data-lang-key="extraPieces">Ekstra Adet:</label>
+                    <input type="number" id="new-adet-input" min="0" value="0">
+                </div>
+            </div>
+
             <button id="save-new-product-button" data-lang-key="saveAndAdd">Kaydet ve Listeye Ekle</button>
             <button class="close-modal" data-lang-key="close">Kapat</button>
         </div>
@@ -139,7 +166,7 @@
         </div>
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
